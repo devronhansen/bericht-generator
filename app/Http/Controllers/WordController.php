@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\anwendungsentwickler;
+
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use App\Traits\WordTransactions;
 
 class WordController extends Controller
 {
+    use WordTransactions;
+
     function __construct()
     {
         $this->middleware('auth');
@@ -21,19 +22,13 @@ class WordController extends Controller
 
     public function createDocument(Request $request)
     {
-        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('template.docx');
-        $templateProcessor->setValue('jahr', $request->input('year'));
-        $templateProcessor->setValue('nr', $request->input('nr'));
-        $templateProcessor->setValue('name', Auth::user()->name);
-        $templateProcessor->setValue('start', $request->input('start'));
-        $templateProcessor->setValue('end', $request->input('end'));
-
-        for ($i = 1; $i < 16; $i++) {
-            $job = anwendungsentwickler::where('id', mt_rand(1, 10))->first();
-            $templateProcessor->setValue('job' . $i, $job->description);
-        }
-
-        $templateProcessor->saveAs('result.docx');
-        return response()->download('result.docx')->deleteFileAfterSend(true);
+        $this->setFileNameFromRequest($request);
+        $this->setRequestValuesInDocument($request)
+             ->saveAs($this->fileName);
+        return response()->download($this->fileName)->deleteFileAfterSend(true);
     }
+
+
+
+
 }
