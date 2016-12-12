@@ -12,7 +12,7 @@ class WordController extends Controller
 
     function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
     }
 
     public function index()
@@ -22,13 +22,9 @@ class WordController extends Controller
 
     public function createDocument(Request $request)
     {
-        $this->setFileNameFromRequest($request);
-        $this->setRequestValuesInDocument($request)
-             ->saveAs($this->fileName);
+        $this->setFileNameFromRequest($request)
+            ->getDocumentWithRequestValues($request)
+            ->saveAs($this->fileName);
         return response()->download($this->fileName)->deleteFileAfterSend(true);
     }
-
-
-
-
 }
