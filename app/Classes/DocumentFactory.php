@@ -45,8 +45,7 @@ class DocumentFactory
     protected function createEmptyDocumentsAndFill()
     {
         for ($currentWeek = $this->startWeek; $currentWeek <= $this->endWeek; $currentWeek++) {
-            dd(dirname(__FILE__));
-            $this->templateProcessor = new TemplateProcessor('template.docx');
+            $this->templateProcessor = new TemplateProcessor(app_path().'/template.docx');
             $this->setValuesInDocument();
             $this->date = $this->date->addDay(3);
             $this->nr++;
@@ -71,7 +70,7 @@ class DocumentFactory
 
     protected function setJobValues()
     {
-        for ($i = 1; $i < 16; $i++) {
+        for ($i = 1; $i < env('JOB_COUNT'); $i++) {
             $job = anwendungsentwickler::where('id', mt_rand(1, 10))->first();
             $this->templateProcessor->setValue('job' . $i, $job->description);
         }

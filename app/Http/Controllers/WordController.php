@@ -21,10 +21,10 @@ class WordController extends Controller
     public function prepareDocument(Request $request)
     {
         $this->validate($request, [
-            'start' => 'required',
-            'end' => 'required',
-            'year' => 'required',
-            'nr' => 'required'
+            'start' => 'required|date|max:100',
+            'end' => 'required|date|max:100',
+            'year' => 'required|integer|max:3',
+            'nr' => 'required|integer|max:100'
         ]);
 
         $documentFactory = new DocumentFactory();
