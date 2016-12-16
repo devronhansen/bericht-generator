@@ -12,7 +12,7 @@
 */
 
 Route::get('/', 'WordController@index');
-Route::post('/', 'WordController@createDocument');
+Route::post('/', 'WordController@prepareDocument');
 
 Auth::routes();
 

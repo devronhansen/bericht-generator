@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Classes\DocumentFactory;
 use Illuminate\Http\Request;
-use App\Traits\WordTransactions;
 
 class WordController extends Controller
 {
-    use WordTransactions;
-
     function __construct()
     {
         //$this->middleware('auth');
@@ -20,11 +18,19 @@ class WordController extends Controller
         return view('word/index');
     }
 
-    public function createDocument(Request $request)
+    public function prepareDocument(Request $request)
     {
-        $this->setFileNameFromRequest($request)
-            ->getDocumentWithRequestValues($request)
-            ->saveAs($this->fileName);
-        return response()->download($this->fileName)->deleteFileAfterSend(true);
+        $this->validate($request, [
+            'start' => 'required',
+            'end' => 'required',
+            'year' => 'required',
+            'nr' => 'required'
+        ]);
+
+        $documentFactory = new DocumentFactory();
+        $documentFactory->createDocumentsWith($request->toArray())
+            ->getZipFromDocuments()
+            ->deleteDocuments(true);
+        return response()->download($documentFactory->getZipPath())->deleteFileAfterSend(true);
     }
 }
