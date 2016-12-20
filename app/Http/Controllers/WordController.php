@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 
 use App\Classes\DocumentFactory;
 use Illuminate\Http\Request;
+use App\Classes\ZipFactory;
 
 class WordController extends Controller
 {
     function __construct()
     {
-        //$this->middleware('auth');
+        $this->middleware('auth');
     }
 
     public function index()
@@ -28,9 +29,11 @@ class WordController extends Controller
         ]);
 
         $documentFactory = new DocumentFactory();
-        $documentFactory->createDocumentsWith($request->toArray())
-            ->getZipFromDocuments()
-            ->deleteDocuments(true);
-        return response()->download($documentFactory->getZipPath())->deleteFileAfterSend(true);
+        $documents = $documentFactory->createDocumentsWith($request->toArray());
+        $zipFactory = new ZipFactory();
+        $zipFactory->createZipFromDocuments($documents);
+        $documentFactory->deleteDocuments($documents);
+
+        return response()->download($zipFactory->getZipPatch())->deleteFileAfterSend(true);
     }
 }

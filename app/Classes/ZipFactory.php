@@ -4,9 +4,10 @@ namespace App\Classes;
 
 use PhpOffice\PhpWord\Shared\ZipArchive;
 
-class ZipCreator
+class ZipFactory
 {
     protected $zip;
+    const ZIP_RESULT = 'result.zip';
 
     public function createZipFromDocuments(array $fileNames)
     {
@@ -35,6 +36,6 @@ class ZipCreator
 
     public function getZipPatch()
     {
-        return env('ZIP_RESULT');
+        return self::ZIP_RESULT;
     }
 }
