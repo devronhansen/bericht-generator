@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Classes\DocumentFactory;
 use Illuminate\Http\Request;
 use App\Classes\ZipFactory;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class WordController extends Controller
 {

@@ -2,35 +2,40 @@
 
 use App\Classes\DocumentFactory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Classes\ZipFactory;
 
-class DocumentTest extends TestCase
+class DocumentFactoryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private $documentFactory;
+    /**
+     * @var DocumentFactory
+     */
+    public $object;
     private $demands;
-    private $zipFactory;
+    /**
+     * @var \Mockery\Mock|\PhpOffice\PhpWord\TemplateProcessor
+     */
+    private $templateProcessor;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
-        $this->documentFactory = new DocumentFactory();
-        $this->zipFactory = new ZipFactory();
+        $this->templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor(app_path().'/template.docx');
+        $this->object = new DocumentFactory($this->templateProcessor);
         $this->createAndLoginUser();
         $this->demands = $this->createDemands();
     }
 
-    public function tearDown() {
-        $this->documentFactory = null;
+    public function tearDown()
+    {
+        $this->object = null;
     }
 
     public function test_it_creates_Documents_from_array()
     {
-        $docfac = new DocumentFactory();
+        $this->object->createDocumentsWith($this->demands);
 
-        $docfac->createDocumentsWith($this->demands);
-
-        $this->assertFileExists(public_path()."\\files\\BerichtNr" . $this->demands['nr'] . ".docx");
+        $this->assertFileExists(public_path() . "/files/BerichtNr" . $this->demands['nr'] . ".docx");
     }
 
     private function createDemands()
@@ -52,15 +57,5 @@ class DocumentTest extends TestCase
         $user = factory(App\User::class)->create();
         $this->actingAs($user);
     }
-
-   /* public function test_Create_Zip_From_Documents()
-    {
-        $documents = $this->documentFactory->createDocumentsWith($this->demands);
-
-        $zipFactory = new ZipFactory();
-        $zipFactory->createZipFromDocuments($documents);
-
-        $this->assertFileExists(public_path()."\\result.zip");
-    }*/
 
 }
